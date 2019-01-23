@@ -96,7 +96,7 @@ public class CollectUriCard {
 	
 	public void connectDB() {
 		try{
-			StringBuffer sql = new StringBuffer("INSERT INTO FAQ_BANK_NOISPIDER(QUESTION, ANSWER, CATEGORY, URL, BANK_NAME) VALUES(?,?,?,?,'快府墨靛')");
+			StringBuffer sql = new StringBuffer("INSERT INTO FAQ_BANK(QUESTION, ANSWER, CATEGORY, URL, BANK_NAME) VALUES(?,?,?,?,'快府墨靛')");
 			PreparedStatement pstm = (PreparedStatement) connectDB.con.prepareStatement(sql.toString());
 			
 			for(int i = 0; i < dataList.size(); i++) {
