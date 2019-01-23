@@ -12,6 +12,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
+import data.SisaNewsData;
+import util.PropReader;
+
 public class SisaNewsCollector {
 	List<SisaNewsData> newsData = new ArrayList<SisaNewsData>();
 	public static void main(String[] args) {
@@ -37,9 +40,9 @@ public class SisaNewsCollector {
 					String date = elm.select("span.date").text();
 					
 					SisaNewsData sisaData = new SisaNewsData();
-					sisaData.title = title;
-					sisaData.url = u;
-					sisaData.date = date;
+					sisaData.setTitle(title);
+					sisaData.setUrl(u);
+					sisaData.setDate(date);
 					newsData.add(sisaData);
 				}
 			} catch(Exception e){}
@@ -53,9 +56,9 @@ public class SisaNewsCollector {
 				String date = d.select("div.alt_time").text();
 
 				SisaNewsData sisaData = new SisaNewsData();
-				sisaData.title = title;
-				sisaData.url = u;
-				sisaData.date = date;
+				sisaData.setTitle(title);
+				sisaData.setUrl(u);
+				sisaData.setDate(date);
 				newsData.add(sisaData);
 			}
 		} catch(Exception e) {
@@ -66,10 +69,10 @@ public class SisaNewsCollector {
 	public void collectData() {
 		try {
 			for(int i = 0; i < newsData.size(); i++) {
-				Document doc = Jsoup.connect(newsData.get(i).url).get();
+				Document doc = Jsoup.connect(newsData.get(i).getUrl()).get();
 				Elements txt = doc.select("section.txt");
 				String content = Jsoup.clean(txt.html(), "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
-				newsData.get(i).content = content;
+				newsData.get(i).setContent(content);
 			}
 
 		} catch (Exception e) {
@@ -79,10 +82,11 @@ public class SisaNewsCollector {
 
 	public void writeTxt() {
 		try {
-			PrintWriter pw = new PrintWriter("C:/Users/kjy79/Desktop/Collect/sisa/sisaNews.txt");
+			String outputPath = PropReader.getInstance().getProperty("outputPath");
+			PrintWriter pw = new PrintWriter(outputPath + "sisaNews.txt");
 			for(int i = 0; i < newsData.size(); i++) {
-				BufferedReader br = new BufferedReader(new StringReader(newsData.get(i).content));
-				String title = "기사제목:" + newsData.get(i).title + "\r\n날짜:" + newsData.get(i).date;
+				BufferedReader br = new BufferedReader(new StringReader(newsData.get(i).getContent()));
+				String title = "기사제목:" + newsData.get(i).getTitle() + "\r\n날짜:" + newsData.get(i).getDate();
 				pw.println(title);
 				while(true) {
 					String line = br.readLine();
