@@ -17,6 +17,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
+import data.NewsData;
+import util.PropReader;
+
 public class NewsCollector {
 	List<NewsData> newsData = new ArrayList<NewsData>();
 	public static void main(String[] args) {
@@ -48,12 +51,12 @@ public class NewsCollector {
 
 			StringBuffer sb =  new StringBuffer();
 			BufferedReader br = new BufferedReader( new InputStreamReader(conn.getInputStream()));
-			for(;;){
-				String line =  br.readLine();
-				if(line == null) break;
+			String line = "";
+			while((line = br.readLine()) != null) {
 				sb.append(line+"\n");
 			}
 			String urlList = sb.toString();
+			System.out.println(urlList);
 			String[] arr = urlList.split(";");
 			br.close();
 			conn.disconnect();
@@ -89,17 +92,17 @@ public class NewsCollector {
 					else if(title.equals("뉴스데스크 클로징"))
 						continue;
 					NewsData nData = new NewsData();
-					nData.title = title;
-					nData.url = tagA;
+					nData.setTitle(title);
+					nData.setUrl(tagA);
 					newsData.add(nData);
 				}	
 			}
 
 			for(int i = 0; i < newsData.size(); i++) {
-				doc = Jsoup.connect(newsData.get(i).url).get();
+				doc = Jsoup.connect(newsData.get(i).getUrl()).get();
 				Elements txt = doc.select("section.txt");
 				String content = Jsoup.clean(txt.html(), "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
-				newsData.get(i).content = content;
+				newsData.get(i).setContent(content);
 			}
 
 		} catch (Exception e) {
@@ -109,11 +112,12 @@ public class NewsCollector {
 
 	public void writeTxt(String date) {
 		try {
-			PrintWriter pw = new PrintWriter("C:/Users/kjy79/Desktop/Collect/news/" + date + ".txt");
+			String outputPath = PropReader.getInstance().getProperty("outputPath");
+			PrintWriter pw = new PrintWriter(outputPath + date + ".txt");
 
 			for(int i = 0; i < newsData.size(); i++) {
-				BufferedReader br = new BufferedReader(new StringReader(newsData.get(i).content));
-				String title= "기사제목:" + newsData.get(i).title;
+				BufferedReader br = new BufferedReader(new StringReader(newsData.get(i).getContent()));
+				String title= "기사제목:" + newsData.get(i).getTitle();
 				pw.println(title);
 				while(true) {
 					String line = br.readLine();
