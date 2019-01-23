@@ -5,6 +5,7 @@ public class SisaNewsData {
 	private String title;
 	private String content;
 	private String date;
+	
 	public String getUrl() {
 		return url;
 	}

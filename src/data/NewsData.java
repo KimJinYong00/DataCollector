@@ -4,6 +4,7 @@ public class NewsData {
 	private String url;
 	private String title;
 	private String content;
+	
 	public String getUrl() {
 		return url;
 	}
